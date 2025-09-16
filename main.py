@@ -9,7 +9,6 @@ from textwrap import dedent
 import cohere
 from dotenv import find_dotenv, load_dotenv, set_key
 from rich.columns import Columns
-from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.prompt import IntPrompt, Prompt
 
@@ -74,8 +73,8 @@ def process_response(
     user_input: str,
     system_instruction: str,
 ):
-    # response = co.chat_stream(
-    response = co.chat(
+    response = co.chat_stream(
+        # response = co.chat(
         model=model,
         messages=[
             {
@@ -90,8 +89,8 @@ def process_response(
         thinking={"type": "disabled"},
     )
 
-    return response.message.content[0].text
-    # return response
+    # return response.message.content[0].text
+    return response
 
 
 def select_model(models):
@@ -182,12 +181,10 @@ if __name__ == "__main__":
             # display buffer indicator
             # before printing response when response
             # is fully loaded.
-            md = Markdown(response)
-            console.print(md)
-            # for event in response:
-            #     if event.type == "content-delta":
-            #         md = Markdown(event.delta.message.content.text)
-            #         console.print(md, end="")
+            # md = Markdown(response)
+            for event in response:
+                if event.type == "content-delta":
+                    console.print(event.delta.message.content.text, end="")
 
         finally:
             increment_kcc(session_request_counter)
